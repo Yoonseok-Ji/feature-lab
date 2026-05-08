@@ -1,0 +1,26 @@
+services:
+  db:
+    # 1. 따로 Dockerfile 안 만들고 공식 이미지를 바로 가져옴
+    image: postgres:13
+    
+    # 2. DB 접속 정보 설정 (환경 변수)
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: archive_db
+      
+    # 3. 데이터 보존 설정 (중요!)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    # 4. 우리가 만든 백엔드 Dockerfile을 빌드함
+    build: ./backend
+    ports:
+      - "8000:8000"
+    # 5. DB가 켜질 때까지 기다렸다가 실행
+    depends_on:
+      - db
+    restart: always
+volumes:
+  postgres_data:
