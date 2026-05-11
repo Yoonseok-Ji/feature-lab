@@ -1,5 +1,4 @@
 from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -15,7 +14,8 @@ router = APIRouter()
 @router.get("", response_model=List[MemoRead])
 def list_memos(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user), 
+    # 함수를 실행하기 전에 먼저 Depends 함수를 실행시켜서 매개변수에 넣음.
 ):
     return memo_crud.get_all(db, current_user.id)
 
