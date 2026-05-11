@@ -2,24 +2,27 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import models, database, schemas, crud
 
-# 설계도 대로 창고(테이블) 짓기
 models.Base.metadata.create_all(bind=database.engine)
+# models에 등록된 클래스들(DB테이블)을 만들어줘, database에 있는 engine 쓸거고, Base의 metadata에는 내가 models에 만든 테이블 정보가 있어.
 
 app = FastAPI()
 
 # DB 세션 가져오기 (트럭 대여소)
 def get_db():
     db = database.SessionLocal()
+    # 
     try:
-        yield db
+        yield db # db를 반환하고 함수는 죽지않고 살아있음. 왜냐면 나중에 이걸 다쓰고 db연결 닫아야하니까.
     finally:
         db.close()
 
 # 1. 메모 저장 (Create)
 # response_model을 설정하면 Pydantic이 응답 데이터를 JSON으로 예쁘게 포장합니다.
-@app.post("/memos", response_model=schemas.Memo)
-def create_memo(memo_in: schemas.MemoCreate, db: Session = Depends(get_db)):
+@app.post("/memos", response_model=schemas.Memo) # response model은 DB에서 한번 필터링해서 이 schemas.Memo에 맞게 변환해서 보내는거야.
+def create_memo(memo_in: schemas.MemoCreate, db: Session = Depends(get_db)): 
+    # 사용자가 보낸 body를 보고 이 매개변수는 Pydantic 모델이니까 request body JSON을 꺼내서 검증 + 변환해서 넣어줌.
     return crud.create_memo(db=db, memo_data=memo_in)
+    # 이 MemoCreate 형식의 인스턴스를 memo_data에 넣어줌. 왜냐면 create_memo 함수는 memo_data를 받으니까
 
 # 2. 메모 조회 (Read)
 @app.get("/memos", response_model=list[schemas.Memo])
