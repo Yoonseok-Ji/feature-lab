@@ -1,7 +1,9 @@
 export interface Memo {
   id: number;
   content: string;
+  image_url: string | null;
   owner_id: number;
+  owner_email: string;
 }
 
 export interface Token {

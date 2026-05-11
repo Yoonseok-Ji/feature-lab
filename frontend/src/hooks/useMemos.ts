@@ -22,13 +22,13 @@ export function useMemos() {
     load();
   }, [load]);
 
-  const create = async (content: string) => {
-    const { data } = await memosApi.createMemo(content);
+  const create = async (content: string, imageUrl?: string) => {
+    const { data } = await memosApi.createMemo(content, imageUrl);
     setMemos((prev) => [data, ...prev]);
   };
 
-  const update = async (id: number, content: string) => {
-    const { data } = await memosApi.updateMemo(id, content);
+  const update = async (id: number, content: string, imageUrl: string | null) => {
+    const { data } = await memosApi.updateMemo(id, content, imageUrl);
     setMemos((prev) => prev.map((m) => (m.id === id ? data : m)));
   };
 

@@ -8,4 +8,5 @@ class Memo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
